@@ -23,7 +23,9 @@ create table matches(
     away_team_score integer not null,
     tournament_id integer references tournaments(tournament_id),
     location_country_id integer references countries(country_id),
-    winner_id integer references countries(country_id)
+    winner_id integer references countries(country_id),
+    home_team_rating integer,
+    away_team_rating integer
     );
 
 
@@ -34,3 +36,4 @@ create table ratings(
     country_id integer references countries(country_id),
     date date not null
     );
+

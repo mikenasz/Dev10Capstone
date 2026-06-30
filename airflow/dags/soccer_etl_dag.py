@@ -2,8 +2,8 @@ import pendulum
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.sdk import dag, task
-import pandas as pd
 from etl.etl import extract_data, Transformer, Loader
+
 
 @dag(
     schedule=None,
@@ -32,8 +32,10 @@ def run_etl_dag():
         loader = Loader(transformed_ratings, transformed_results, engine)
         loader.load_all()
         engine.dispose()
+
+    
     
     etl_task = run_soccer_etl()
-    soccer_schema >> etl_task
+    soccer_schema >> etl_task 
     
 run_etl_dag()

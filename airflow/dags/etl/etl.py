@@ -11,7 +11,8 @@ class Transformer:
     def __init__(self, ratings_df, results_df):
         self.ratings_df = ratings_df
         self.results_df = results_df
-    
+        
+
     def drop_columns(self):
         
         self.results_df = self.results_df.drop(columns=['city', 'neutral'])
@@ -26,6 +27,12 @@ class Transformer:
         
         self.ratings_df = self.ratings_df.rename(columns={'team': 'country'})
         self.results_df = self.results_df.rename(columns={'date': 'match_date', 'home_score': 'home_team_score', 'away_score': 'away_team_score', 'country': 'match_location'})
+    
+    def clean_nbsp(self):
+        self.ratings_df['country'] = self.ratings_df['country'].str.replace('\xa0', ' ', regex=False)
+        self.results_df['home_team'] = self.results_df['home_team'].str.replace('\xa0', ' ', regex=False)
+        self.results_df['away_team'] = self.results_df['away_team'].str.replace('\xa0', ' ', regex=False)
+        self.results_df['match_location'] = self.results_df['match_location'].str.replace('\xa0', ' ', regex=False)
        
     def add_winner_column(self):
         
@@ -39,6 +46,25 @@ class Transformer:
         self.results_df['home_team_score'] = self.results_df['home_team_score'].astype(int)
         self.results_df['away_team_score'] = self.results_df['away_team_score'].astype(int)
         self.results_df['match_date'] = pd.to_datetime(self.results_df['match_date'], format='mixed')
+        
+    def add_ratings(self):
+        ratings = self.ratings_df.sort_values('date')
+        self.results_df = self.results_df.sort_values('match_date')
+
+        self.results_df = pd.merge_asof(
+            self.results_df, ratings[['country', 'date', 'rating']],
+            left_on='match_date', right_on='date',
+            left_by='home_team', right_by='country',
+            direction='backward',
+        ).rename(columns={'rating': 'home_team_rating'}).drop(columns=['country', 'date'])
+
+        self.results_df = pd.merge_asof(
+            self.results_df.sort_values('match_date'), ratings[['country', 'date', 'rating']],
+            left_on='match_date', right_on='date',
+            left_by='away_team', right_by='country',
+            direction='backward',
+        ).rename(columns={'rating': 'away_team_rating'}).drop(columns=['country', 'date'])
+        
 
     
     def transform(self):
@@ -46,8 +72,10 @@ class Transformer:
         self.drop_columns()
         self.drop_nulls()
         self.rename_columns()
+        self.clean_nbsp()
         self.add_winner_column()
         self.type_cast_columns()
+        self.add_ratings()
         return self.ratings_df, self.results_df
 
 class Loader:
