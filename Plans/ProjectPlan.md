@@ -2,20 +2,24 @@
 
 ## Overview
 
-This capstone project will focus on analyzing data on international matches as well as ELO rankings.
+This capstone project will focus on analyzing data on international soccer matches as well as ELO rankings.
 
 ## Questions
 
-1. Are underdog teams preforming better over time?
+1. Which teams are over preforming in major international tournaments?
 
 
 2. Are matches more high scoring or low scoring across decades?
 
-3. Which nations are underperforming or overperforming there ELO?
+3. Are there more ties in games over time?
 
-4. Are winning margins increasing or decreasing between games?
+4. How good is ELO for a match predictor?
 
-5. How do these metrics compare across continents/confederation (Europe, South America, Asia, Africa)
+5. Which major tournament has the tightest ELO disparity between teams?
+
+6. How has the ELO rating trended for popular international teams?
+
+
 
 ## Dataset
 
