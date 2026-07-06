@@ -6,6 +6,7 @@ from dynaconf import Dynaconf
 
 app = Dash()
 
+#Build the database engine
 def build_engine():
     settings = Dynaconf(
         envvar_prefix="DB",
@@ -17,6 +18,7 @@ def build_engine():
 
 engine = build_engine()
 
+#This will load the ELO data for our line graph and top 10 ELO ratings chart
 def load_elo_data(db_engine):
     query = """
     SELECT
@@ -33,7 +35,8 @@ def load_elo_data(db_engine):
     data["date"] = pd.to_datetime(data["date"])
     return data
 
-def pull_big_tournament_matches(engine):
+#Load all matches from the database for analysis and visualization
+def pull_all_matches(engine):
     query = """
      SELECT m.match_date, t.tournament_name,
            h.country_name as home_team, a.country_name as away_team,
@@ -46,9 +49,10 @@ def pull_big_tournament_matches(engine):
     """
     return pd.read_sql(query, engine)
 
-all_tournament_matches = pull_big_tournament_matches(engine)
+all_tournament_matches = pull_all_matches(engine)
 all_tournament_matches["match_date"] = pd.to_datetime(all_tournament_matches["match_date"])
 
+#Main tournaments for analysis
 TOURNAMENTS = [
     "FIFA World Cup",
     "UEFA Euro",
@@ -58,6 +62,7 @@ TOURNAMENTS = [
     "African Cup of Nations",
 ]
 
+#Build the prediction plot to see how often the favorite team wins based on ELO rating gaps
 def build_prediction_plot(df):
     
     d = df[
@@ -94,7 +99,8 @@ def build_prediction_plot(df):
         100 * calibration_summary['fav_wins'] / calibration_summary['matches']
     ).round(2)
     return calibration_summary
-    
+
+#Goals aggregation functions for analysis and visualization
 def avg_goals_by_year(df):
     out = df.copy()
     out['year'] = out['match_date'].dt.year
@@ -151,7 +157,7 @@ def build_top_elo_chart(df):
     return fig
 
 
-
+#Underdog performance analysis functions for analysis and visualization
 def build_tournament_performance_summary(df, tournament="FIFA World Cup", min_matches=6, loss_gap=150, draw_gap=250):
     
     if tournament in TOURNAMENTS:
@@ -181,25 +187,21 @@ def build_tournament_performance_summary(df, tournament="FIFA World Cup", min_ma
     f = f[valid_loss | valid_draw | valid_win].copy()
 
     f["is_event"] = (valid_loss | valid_draw).astype(int)
-    group_col = "underdog_team"
-    pct_col_name = "underdog_upset_pct"
-    matches_col = "underdog_matches"
-    events_col = "underdog_upsets"
 
     summary = (
-        f.groupby(group_col, as_index=False)
+        f.groupby("underdog_team", as_index=False)
         .agg(
             total_matches=("is_event", "size"),
             total_events=("is_event", "sum"),
         )
     )
     
-    summary[pct_col_name] = (100 * summary["total_events"] / summary["total_matches"]).round(2)
-    summary = summary.rename(columns={"total_matches": matches_col, "total_events": events_col})
+    summary["underdog_upset_pct"] = (100 * summary["total_events"] / summary["total_matches"]).round(2)
+    summary = summary.rename(columns={"total_matches": "underdog_matches", "total_events": "underdog_upsets"})
     
-    summary = summary[summary[matches_col] >= min_matches]
+    summary = summary[summary["underdog_matches"] >= min_matches]
     
-    return summary.sort_values(pct_col_name, ascending=False)
+    return summary.sort_values("underdog_upset_pct", ascending=False)
 
 
 elo_filtered_matches = all_tournament_matches[
@@ -209,9 +211,10 @@ elo_filtered_matches = all_tournament_matches[
     & (all_tournament_matches["match_date"] < "2026-03-01")
 ].copy()
 
+#Elo gap by tournament
 def tournament_competitiveness(df):
-    comp = df
     
+    comp = df
     comp = comp[comp["tournament_name"].isin(TOURNAMENTS)].copy()
     comp = comp[
         comp["home_team_rating"].notna() &
@@ -293,6 +296,7 @@ elo_data = load_elo_data(engine)
 
 all_countries = elo_data["country_name"].unique()
 
+#ELO analysis tab layout
 def render_elo_tab():
     return html.Div(
         [
@@ -343,7 +347,7 @@ def render_elo_tab():
         style={"maxWidth": "1200px", "margin": "0 auto", "padding": "10px 16px 36px", "textAlign": "center"},
     )
 
-
+#Goals analysis tab layout
 def render_goals_tab():
     return html.Div(
         [
@@ -409,7 +413,7 @@ app.layout = html.Div([
    
 ])
 
-
+#Callback for ELO rating line chart
 @app.callback(
     Output("elo-trend-chart", "figure"),
     Input("country-filter", "value"),
@@ -432,6 +436,7 @@ def update_elo_chart(selected_countries):
     return fig
 
 
+#Callback for underdog performance chart
 @app.callback(
     Output("underdog-chart", "figure"),
     Input("elo-tournament-filter", "value"),
@@ -466,7 +471,7 @@ def update_underdog_chart(selected_tournament):
     )
     return fig
 
-
+#Call back for goals chart
 @app.callback(
     Output("goals-chart", "figure"),
     Input("goals-tournament-filter", "value"),
@@ -509,6 +514,7 @@ def update_goals_chart(selected_tournament):
 
     return goals_fig
 
+#Callback for draws chart
 @app.callback(
     Output("draws-chart", "figure"), 
     Input("goals-tournament-filter", "value")

@@ -15,12 +15,14 @@ from etl.etl import extract_data, Transformer, Loader
 
 def run_etl_dag():
     
+    #Create schema and run DDL
     soccer_schema = SQLExecuteQueryOperator(
         task_id="create_soccer_schema",
         sql = "/etl/soccer.sql",
         conn_id= 'soccer_etl',
     )
     
+    #ETL process
     @task()
     def run_soccer_etl():
         hook = PostgresHook(postgres_conn_id='soccer_etl')

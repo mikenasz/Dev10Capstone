@@ -1,11 +1,12 @@
 import pandas as pd
 
-
+#Extractor
 def extract_data(file_path):
     
     df = pd.read_csv(file_path)
     return df 
 
+#Transformer class
 class Transformer:
     
     def __init__(self, ratings_df, results_df):
@@ -20,6 +21,7 @@ class Transformer:
     "East Germany": "German DR",
     }
     
+    #Fix country names to match between ratings and results datasets
     def normalize_country_names(self):
         self.ratings_df['team'] = self.ratings_df['team'].replace(self.NAME_FIXES)
         self.results_df['home_team'] = self.results_df['home_team'].replace(self.NAME_FIXES)
@@ -42,6 +44,7 @@ class Transformer:
         self.ratings_df = self.ratings_df.rename(columns={'team': 'country'})
         self.results_df = self.results_df.rename(columns={'date': 'match_date', 'home_score': 'home_team_score', 'away_score': 'away_team_score', 'country': 'match_location'})
     
+    #Replace non-breaking spaces with regular spaces
     def clean_nbsp(self):
         self.ratings_df['team'] = self.ratings_df['team'].str.replace('\xa0', ' ', regex=False)
         self.results_df['home_team'] = self.results_df['home_team'].str.replace('\xa0', ' ', regex=False)
@@ -62,11 +65,12 @@ class Transformer:
         self.results_df['match_date'] = pd.to_datetime(self.results_df['match_date'], format='mixed')
         
     
-        
+    #Add ratings using the most recent prior rating for a match   
     def add_ratings(self):
         ratings = self.ratings_df.sort_values('date')
         self.results_df = self.results_df.sort_values('match_date')
 
+        #Home teams
         self.results_df = pd.merge_asof(
             self.results_df, ratings[['country', 'date', 'rating']],
             left_on='match_date', right_on='date',
@@ -74,6 +78,7 @@ class Transformer:
             direction='backward',
         ).rename(columns={'rating': 'home_team_rating'}).drop(columns=['country', 'date'])
 
+        #Away teams
         self.results_df = pd.merge_asof(
             self.results_df, ratings[['country', 'date', 'rating']],
             left_on='match_date', right_on='date',
@@ -95,6 +100,7 @@ class Transformer:
         self.add_ratings()
         return self.ratings_df, self.results_df
 
+#Loading class
 class Loader:
     
     def __init__(self, ratings_df, results_df, engine):
