@@ -62,7 +62,7 @@ The cleaned/transformed data will be then loaded to Postgres into our normalized
 ## Analysis and Conclusions
 
 For the visualizations, I used Dash as well as Pandas to read the cleaned data from Postgres.
-For our ELO charts and analysis, I used data from 2000-2025, this is because there were many inconsistencies with ratings from the prior time period. Our matches analysis will use the full dataset. The major tournaments used for this analysis will be the World Cup, Euros, Copa America, AFC Asian Cup, Gold Cup, and AFCON
+For our ELO charts and analysis, I used data from 2000-2025, this is because there were many inconsistencies with ratings from the prior time period. Our matches analysis will use the full dataset. The major tournaments used for this analysis will be the World Cup, Euros, Copa America, AFC Asian Cup, Gold Cup, and AFCON.
 
 
 ## Charts
@@ -83,7 +83,7 @@ For this chart we will use the median elo gaps by major tournaments we analyzed.
 
 ### Favorite Win %
 
-This chart will visualize percentage of times the favorite has won based on elo gap categories. This is when the higher rated ELO team wins
+This chart will visualize percentage of times the favorite has won based on elo gap categories. This is when the higher rated ELO team wins.
 
 ![FavWin](/images/favwinpct.png)
 
