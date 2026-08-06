@@ -113,7 +113,7 @@ Other charts for more exploration are ELO trends by country and average goals by
 
 1. Which international teams have upset stronger teams the most in high stakes, tournament games?
 
-From our chart, we saw the teams that have the highest upset % by tournament some in the World Cup are South Korea, Morocco, and Mexico. The highest upset % from our major tournaments we analyzed was Jordan at the AFC Asian Cup with an upset % of 87.5. We noticed that at the Euros there were the fewest upsets, and the highest was 33.33% from Albania. 
+From our chart, we saw the teams that have the highest upset % by tournament. Some in the World Cup are South Korea, Morocco, and Mexico. The highest upset % from our major tournaments we analyzed was Jordan at the AFC Asian Cup with an upset % of 87.5. We noticed that at the Euros there were the fewest upsets, and the highest was 33.33% from Albania. 
 
 We can conclude the top teams that got results from heavy favorites from these high stakes competitive international matches. Which can help identify underrated teams based on ELO ratings.
 
@@ -127,17 +127,17 @@ We can conclude that the Euros has the lowest median ELO gap across games, which
 
 We can see that the favorite win % climbs steadily as the ELO gap gets higher, starting at a marginal difference of 1-50, the higher ranked teams wins around 51% of the time. As the gap raises so does the favorite win %.
 
-In conclusion, we can see that ELO rating is good predictor in our results dataset, a marginal difference for the favorite means the game tends to be more 50/50, and the percentage keeps climbing as gap increases, with the highest gap category around 451-500 has the favorite win 95% of the team.
+In conclusion, we can see that ELO rating is good predictor in our results dataset, a marginal difference for the favorite means the game tends to be more 50/50, and the percentage keeps climbing as gap increases, with the highest gap category around 451-500 has the favorite win 95% of the time.
 
 4. What are trends in the game we have seen over time, less goals/goal differential?
 
-From the cart, it seems as the total goals scored has declined over the years but has stabilized in more modern times. With goal differential it has been more stable over the years without a big indication of a decrease unlike total goals per match.
+From the chart, it seems as though the total goals scored has declined over the years, but has stabilized in more modern times. With goal differential it has been more stable over the years without a big indication of a decrease unlike total goals per match.
 
 In conclusion, we can definitely note that total goals per game has dropped since the 1960s, this indicates that some sort of play style might have changed around this time to incorporate more defensive and cautious tactics. 
 
 5. Are draws becoming more common in matches?
 
-Draws have seen a slight increase over time, however nothing signficant worth noting and have stabilized in the past 30 years. This correlates well with what we saw in the total goals per year, stronger evidence that around the 1960s tactics have changed for the game to become more defensive and less attacking.
+Draws have seen a slight increase over time, however nothing significant worth noting and have stabilized in the past 30 years. This correlates well with what we saw in the total goals per year, stronger evidence that around the 1960s tactics have changed for the game to become more defensive and less attacking.
 
 6. Who are the top teams based on most recent ELO ratings? 
 
